@@ -1,0 +1,19 @@
+{
+	"info": {
+		"_postman_id": "31fd1d6a-a569-4801-8f10-d50ed5e15021",
+		"name": "mini-rag-app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47074386",
+		"_collection_link": "https://material-geoscientist-99064064-5130149.postman.co/workspace/Mosalam~c3c7c465-a81f-4740-83e6-cc27e1303cd3/collection/47074386-31fd1d6a-a569-4801-8f10-d50ed5e15021?action=share&source=collection_link&creator=47074386"
+	},
+	"item": [
+		{
+			"name": "welcom- requset",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

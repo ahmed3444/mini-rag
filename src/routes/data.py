@@ -5,6 +5,8 @@ import aiofiles
 
 from src.helpers.config import get_settings, Settings
 from src.controllers import DataController, ProjectController
+data_controller = DataController()
+project_controller = ProjectController()
 
 data_router = APIRouter(
     prefix="/api/v1/data",
@@ -27,6 +29,11 @@ async def upload_data(project_id: str, file: UploadFile, app_settings: Settings 
         )
 
     project_dir_path = ProjectController().get_project_path(project_id=project_id)
+    file_path=data_controller.generate_unique_fillname(
+        orig_file_string=file.filename,
+        project_id=project_id
+    )
+    
     os.makedirs(project_dir_path, exist_ok=True)
 
     file_path = os.path.join(project_dir_path, file.filename)

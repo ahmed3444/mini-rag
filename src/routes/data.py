@@ -5,6 +5,7 @@ import aiofiles
 
 from src.helpers.config import get_settings, Settings
 from src.controllers import DataController, ProjectController
+form src.models.enums.Response import ResponseStatus
 data_controller = DataController()
 project_controller = ProjectController()
 
@@ -15,7 +16,7 @@ data_router = APIRouter(
 
 @data_router.post("/upload/{project_id}")
 async def upload_data(project_id: str, file: UploadFile, app_settings: Settings = Depends(get_settings)):
-    is_valid, result_signal = DataController().validate_upload_file(file=file)
+    is_valid, result_signal = data_controller.validate_upload_file(file=file)
 
     if not is_valid:
         return JSONResponse(
@@ -29,18 +30,27 @@ async def upload_data(project_id: str, file: UploadFile, app_settings: Settings 
         )
 
     project_dir_path = ProjectController().get_project_path(project_id=project_id)
-    file_path=data_controller.generate_unique_fillname(
-        orig_file_string=file.filename,
+    file_path = data_controller.generate_unique_filename(
+        long_file_name=file.filename,
         project_id=project_id
     )
-    
+
     os.makedirs(project_dir_path, exist_ok=True)
 
-    file_path = os.path.join(project_dir_path, file.filename)
+    file_path,file_id = os.path.join(project_dir_path, file.filename)
+    try:
+        async with aiofiles.open(file_path, 'wb') as out_file:
+            while chunk := await file.read(app_settings.FILE_CHUNK_SIZE):
+                await out_file.write(chunk)
 
-    async with aiofiles.open(file_path, 'wb') as out_file:
-        while chunk := await file.read(app_settings.FILE_CHUNK_SIZE):
-            await out_file.write(chunk)
+    except Exception as e:
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "message": "Error occurred while saving file",
+                "signal": ResponseStatus.FILE_SAVE_ERROR,
+            }
+        )
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
@@ -49,7 +59,8 @@ async def upload_data(project_id: str, file: UploadFile, app_settings: Settings 
             "result_signal": result_signal,
             "project_id": project_id,
             "file_name": file.filename,
-            "file_path": file_path
+            "file_path": file_path,
+            "file_id": file_id
         }
     )
 

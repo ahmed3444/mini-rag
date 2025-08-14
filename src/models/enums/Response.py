@@ -8,3 +8,4 @@ class ResponseStatus( Enum):
     UNAUTHORIZED = "unauthorized"
     FORBIDDEN = "forbidden"
     INTERNAL_SERVER_ERROR = "internal_server_error"
+    FILE_SAVE_ERROR = "file_save_error"

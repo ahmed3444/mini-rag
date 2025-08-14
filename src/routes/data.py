@@ -5,7 +5,8 @@ import aiofiles
 
 from src.helpers.config import get_settings, Settings
 from src.controllers import DataController, ProjectController
-form src.models.enums.Response import ResponseStatus
+from src.models.enums.Response import ResponseStatus
+from src.routes.schemes.data import ProcessRequest
 data_controller = DataController()
 project_controller = ProjectController()
 
@@ -77,3 +78,11 @@ def generate_random_string(self, orig_file_string: str, project_id: str):
 
 def get_cleaned_file_name(self, orig_file_string: str):
     return orig_file_string.replace(" ", "_").replace("/", "_").replace("\\", "_")
+
+
+
+@data_router.post("/process/{project_id}")
+async def process_endpoint(project_id:str,process_request:ProcessRequest):
+    file_id = process_request.file_id
+    
+    return file_id

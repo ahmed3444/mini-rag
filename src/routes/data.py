@@ -4,11 +4,12 @@ import os
 import aiofiles
 
 from src.helpers.config import get_settings, Settings
-from src.controllers import DataController, ProjectController
+from src.controllers import DataController, ProjectController,ProcessController
 from src.models.enums.Response import ResponseStatus
 from src.routes.schemes.data import ProcessRequest
 data_controller = DataController()
 project_controller = ProjectController()
+
 
 data_router = APIRouter(
     prefix="/api/v1/data",
@@ -84,5 +85,22 @@ def get_cleaned_file_name(self, orig_file_string: str):
 @data_router.post("/process/{project_id}")
 async def process_endpoint(project_id:str,process_request:ProcessRequest):
     file_id = process_request.file_id
-    
-    return file_id
+    chunk_size = process_request.chunk_size
+    overlap_size = process_request.overlap_size
+    process_controller = ProcessController(project_id=project_id)
+    file_content = process_controller.get_file_content(file_id=file_id) 
+    file_chunks = process_controller.process_file_content(
+        file_content=file_content,
+          file_id=file_id,
+            chunk_size=chunk_size,
+              overlap_size=overlap_size
+              )
+
+    if file_chunks is None:
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "signal": ResponseStatus.FILE_PROCESSING_ERROR,
+            }
+        )
+    return file_chunks

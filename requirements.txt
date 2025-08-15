@@ -6,3 +6,4 @@ pydantic-settings
 aiofiles
 langchain
 PyMuPDF
+langchain_community

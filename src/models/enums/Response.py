@@ -9,3 +9,5 @@ class ResponseStatus( Enum):
     FORBIDDEN = "forbidden"
     INTERNAL_SERVER_ERROR = "internal_server_error"
     FILE_SAVE_ERROR = "file_save_error"
+    FILE_PROCESSING_ERROR = "file_processing_error"
+    

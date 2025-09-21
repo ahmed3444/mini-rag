@@ -1,12 +1,16 @@
-from fastapi import FastAPI, APIRouter, Depends, UploadFile, status
+from fastapi import FastAPI, APIRouter, Depends, UploadFile, status ,Request
 from fastapi.responses import JSONResponse
 import os
+from .scheme_db import DataChunk
+
 import aiofiles
+
 
 from src.helpers.config import get_settings, Settings
 from src.controllers import DataController, ProjectController,ProcessController
 from src.models.enums.Response import ResponseStatus
 from src.routes.schemes.data import ProcessRequest
+from src.models.ProjectModel import ProjectModel
 data_controller = DataController()
 project_controller = ProjectController()
 
@@ -17,8 +21,11 @@ data_router = APIRouter(
 )
 
 @data_router.post("/upload/{project_id}")
-async def upload_data(project_id: str, file: UploadFile, app_settings: Settings = Depends(get_settings)):
+async def upload_data(request: Request, project_id: str, file: UploadFile, app_settings: Settings = Depends(get_settings)):
     is_valid, result_signal = data_controller.validate_upload_file(file=file)
+
+    project_model=ProjectModel(db_client=request.app.db_client)
+    project = await project_model.get_project_or_create_one(project_id=project_id)
 
     if not is_valid:
         return JSONResponse(
@@ -59,23 +66,28 @@ async def upload_data(project_id: str, file: UploadFile, app_settings: Settings 
         content={
             "is_valid": is_valid,
             "result_signal": result_signal,
-            "project_id": project_id,
+            "project_id": str(project._id),
             "file_name": file.filename,
             "file_path": file_path,
-            "file_id": file_id
+            "file_id": file_id,
+
         }
     )
 
-# الوظائف اللي تحت مش مكانها هنا، تنقل لـ class أو module تاني مناسب
 def generate_random_string(self, orig_file_string: str, project_id: str):
     random_filename = self.generate_random_string()
     project_path = ProjectController().get_project_path(project_id=project_id)
     cleaned_file_name = self.get_cleaned_file_name(orig_file_string=orig_file_string)
     new_file_path = os.path.join(project_path, random_filename + "_" + cleaned_file_name)
+
+
     while os.path.exists(new_file_path):
         random_filename = self.generate_random_string()
         new_file_path = os.path.join(project_path, random_filename + "_" + cleaned_file_name)
     return new_file_path
+
+
+
 
 def get_cleaned_file_name(self, orig_file_string: str):
     return orig_file_string.replace(" ", "_").replace("/", "_").replace("\\", "_")
@@ -103,4 +115,14 @@ async def process_endpoint(project_id:str,process_request:ProcessRequest):
                 "signal": ResponseStatus.FILE_PROCESSING_ERROR,
             }
         )
-    return file_chunks
+    file_chunks_records=[
+        DataChunk(
+            chunk_text=chunk.page_content,
+            chunk_meta=chunk.metadata,
+            chunk_order=index + 1,
+            chunk_project_id=project._id
+        )
+        for index, chunk in enumerate(file_chunks)
+    ]
+    chunk_model = ChunkModel(db_client=request.app.db_client)
+    no_records = chunk_model.insert_many_chunks(data_chunks=file_chunks_records)

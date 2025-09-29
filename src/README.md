@@ -37,6 +37,14 @@ $ cp .env.example .env
 Set your enviroment vriables in the '.env'
 file like 'OPEN_API_KEY' valus.
 
+```
+## Run Docker Compose Services
+```bash
+$ cd docker
+$ cp .env.example .env
+```
+- update `.env` with your credentials
+
 
 ## Run the FastAPI server
 ```bash

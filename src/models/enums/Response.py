@@ -10,4 +10,8 @@ class ResponseStatus( Enum):
     INTERNAL_SERVER_ERROR = "internal_server_error"
     FILE_SAVE_ERROR = "file_save_error"
     FILE_PROCESSING_ERROR = "file_processing_error"
+    PROCESSING_SUCCESS = "processing_success"
+    PROCESSING_FAILED = "processing_failed"
+    FILE_UPLOAD_ERROR = "file_upload_error"
+    FILE_UPLOAD_SUCCESS = "file_upload_success"
     

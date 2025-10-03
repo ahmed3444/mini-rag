@@ -5,10 +5,20 @@ from bson import ObjectId
 
 
 class DataChunk(BaseModel):
-    _id: Optional[ObjectId] 
+    id: Optional[ObjectId]=Field(default=None, alias="_id")
     chunk_text: str = Field(..., min_length=1)
     chunk_meta: dict
     chunk_order: int = Field(..., gt=0)
     chunk_project_id: ObjectId
     class Config:
         arbitrary_types_allowed = True 
+        
+    @classmethod
+    def get_indexing(cls):
+            return [{
+                 "key":[("chunk_project_id", 1)],
+                 "name":"chunk_project_id_index",
+                 "unique":False
+
+            }
+            ]

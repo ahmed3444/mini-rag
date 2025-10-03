@@ -11,5 +11,17 @@ class Project(BaseModel):
         if not value.isalnum():
             raise ValueError("Project ID must not be empty and must be alphanumeric")
         return value  
-class Config:
+    class Config:
         arbitrary_types_allowed = True
+
+
+    @classmethod
+    def get_indexing(cls):
+            return [{
+                 "key":[("project_id", 1)],
+                 "name":"project_id_index",
+                 "unique":True
+
+            }
+            ]
+                

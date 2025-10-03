@@ -9,7 +9,7 @@ def ChunkModel(BaseDataModel):
         self.collection = self.db_client[DataBaseEnum.DATA_CHUNKS.value]
     
     async def create_data_chunk(self, data_chunk: DataChunk) :
-        result = await self.collection.insert_one(data_chunk.dict())
+        result = await self.collection.insert_one(data_chunk.dict(by_alias=True, exclude_unset=True))
         data_chunk._id = result.inserted_id
 
         return data_chunk
@@ -25,9 +25,16 @@ def ChunkModel(BaseDataModel):
     async def insert_many_chunks(self, data_chunks: list[DataChunk],batch_size: int = 100):
         for i in range(0, len(data_chunks), batch_size):
             batch = data_chunks[i:i + batch_size]
-            operations = [InsertOne(chunk.dict()) for chunk in batch]
+
+            operations = [InsertOne(chunk.dict(by_alias=True, exclude_unset=True)) for chunk in batch]
             await self.collection.bulk_write(operations)
+
+
+
+
     async def delete_chunks_by_project_id(self, project_id: str):
-        result = await self.collection.delete_many({"chunk_project_id": ObjectId(project_id)})
+        result = await self.collection.delete_many(
+            {"chunk_project_id": ObjectId(project_id)}
+        )
         return result.deleted_count
     

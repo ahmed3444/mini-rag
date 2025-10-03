@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     FILE_EXTENSIONS: list
     FILE_MAX_SIZE: int = 10 
     FILE_CHUNK_SIZE: int = 51200
-    MongoDB_URI: str 
-    MongoDB_DB_NAME: str
+    MONGO_DB_URI: str 
+    MONGO_DB_NAME: str
 
     class Config:
         env_file = "./src/.env"

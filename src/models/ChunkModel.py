@@ -3,10 +3,28 @@ from .scheme_db import DataChunk
 from .enums.DataBaseEnum import DataBaseEnum
 from pymongo import InsertOne
 from bson.objectid import ObjectId
-def ChunkModel(BaseDataModel):
+class ChunkModel(BaseDataModel):
     def __init__(self, db_client: object):
         super().__init__(db_client)
         self.collection = self.db_client[DataBaseEnum.DATA_CHUNKS.value]
+
+    @classmethod
+    async def create_instance(cls, db_client: object):
+        instance = cls(db_client)
+        await instance.init_collection()
+        return instance
+
+    async def init_collection(self):
+        all_collections= await self.db_client.list_collection_names()
+        if DataBaseEnum.DATA_CHUNKS.value not in all_collections:
+            self.collection = self.db_client[DataBaseEnum.DATA_CHUNKS.value]
+            indexes = DataChunk.get_indexing()
+            for index in indexes:
+                await self.collection.create_index(
+                    index["key"],
+                    name=index["name"],
+                    unique=index["unique"] 
+                )
     
     async def create_data_chunk(self, data_chunk: DataChunk) :
         result = await self.collection.insert_one(data_chunk.dict(by_alias=True, exclude_unset=True))

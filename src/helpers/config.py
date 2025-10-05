@@ -1,18 +1,20 @@
-from pydantic_settings import BaseSettings,SettingsConfigDict
-
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    App_NAME: str
-    App_DESCRIPTION: str
-    App_VERSION: str
+    APP_NAME: str
+    APP_DESCRIPTION: str
+    APP_VERSION: str
     FILE_EXTENSIONS: list
-    FILE_MAX_SIZE: int = 10 
-    FILE_CHUNK_SIZE: int = 51200
-    MONGO_DB_URI: str 
+    FILE_MAX_SIZE: int
+    FILE_CHUNK_SIZE: int
+    MONGO_DB_URI: str
     MONGO_DB_NAME: str
 
     class Config:
-        env_file = "./src/.env"
+        env_file = "src/.env"
+        env_file_encoding = 'utf-8'
+
+settings = Settings()
 
 def get_settings():
-    return Settings()
+    return settings

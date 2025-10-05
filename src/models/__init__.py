@@ -1,1 +1,1 @@
-from src.models.enums.Response import ResponseStatus
+from src.models.enums.Response import ResponseSignal

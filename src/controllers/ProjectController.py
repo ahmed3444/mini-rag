@@ -1,6 +1,6 @@
 from .BaseController import BaseController
 from fastapi import HTTPException, UploadFile
-from src.models.enums.Response import ResponseStatus
+from src.models.enums.Response import ResponseSignal
 import os
 
 

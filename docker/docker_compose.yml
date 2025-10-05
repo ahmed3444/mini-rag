@@ -1,7 +1,7 @@
 services:
   mongodb:
     image: mongo:7-jammy
-    container_name: mongodb
+    container_name: mongodb2
     ports:
       - "27017:27017"
     volumes:
@@ -10,8 +10,8 @@ services:
       - backend
     restart: always
     environment:
-    - MongoDB_INITDB_ROOT_USERNAME=${ MongoDB_INITDB_ROOT_USERNAME}
-    - MongoDB_INITDB_ROOT_PASSWORD=${ MongoDB_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 
 networks:
   backend:

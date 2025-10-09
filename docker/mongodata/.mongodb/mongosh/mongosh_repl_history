@@ -1,0 +1,15 @@
+db.getUsers()
+use admin
+})
+  roles: [ { role: "root", db: "admin" } ]
+  pwd: "admin123",
+  user: "admin",
+use admin
+})
+  roles: [ { role: "root", db: "admin" } ]
+  pwd: "admin123",  // حط باسورد أقوى من كده لو عايز
+  user: "admin",
+use admin
+db.createCollection("users")
+use mydb
+max

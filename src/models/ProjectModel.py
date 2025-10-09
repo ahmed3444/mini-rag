@@ -34,12 +34,13 @@ class ProjectModel(BaseDataModel):
         return project
 
     async def get_project_or_create_one(self, project_id: str):
-        record = await self.collection.find_one({"project_id": project_id})
+        record = await self.collection.find_one({"project_id": str(project_id)})
         if record is None:
-            new_project = Project(project_id=project_id)
+            new_project = Project(project_id=str(project_id))
             created_project = await self.create_project(new_project)
             return created_project
         return Project(**record)
+
     
     async def get_all_project(self, page: int = 1, page_size: int = 10):
         total_documents = await self.collection.count_documents({})  # عدد المشاريع الكلي

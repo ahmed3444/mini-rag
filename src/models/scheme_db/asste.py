@@ -5,13 +5,13 @@ from datetime import datetime
 
 class Asset(BaseModel):
     id: ObjectId = Field(default_factory=ObjectId, alias="_id")
-    asste_project_id: ObjectId
-    asste_type: str=Field(..., min_length=1)
-    asste_name: str=Field(..., min_length=1)
-    asste_size: int = Field(..., ge=0)
+    asset_project_id: ObjectId
+    asset_type: str=Field(..., min_length=1)
+    asset_name: str=Field(..., min_length=1)
+    asset_size: int = Field(..., ge=0)
 
-    asste_config: Optional[dict] = Field(default=None)
-    asste_pushed_out: datetime = Field(default_factory=datetime.utcnow)
+    asset_config: Optional[dict] = Field(default=None)
+    asset_pushed_out: datetime = Field(default_factory=datetime.utcnow)
 
 
     class Config:
@@ -22,13 +22,13 @@ class Asset(BaseModel):
     def get_index(cls, db_client, asset_id: ObjectId):
         return[
             {
-                "key": [("asste_project_id", 1)],
-                "name": "asste_project_id_idx",
+                "key": [("asset_project_id", 1)],
+                "name": "asset_project_id_idx",
                 "unique": False
             },
             {
-                "key": [("asste_name", 1)],
-                "name": "asste_name_idx",
+                "key": [("asset_name", 1)],
+                "name": "asset_name_idx",
                 "unique": True
             }
         ]

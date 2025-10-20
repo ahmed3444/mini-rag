@@ -8,3 +8,6 @@ langchain
 PyMuPDF
 langchain_community
 motor
+openai
+anthropic
+cohere

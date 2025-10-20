@@ -74,11 +74,13 @@ async def upload_data(request: Request, project_id: int, file: UploadFile,
     )
 
     asset_resource = Asset(
-        asset_project_id= project.id,
+        asset_project_id=str(project._id) if project._id else str(project_id),
         asset_type=AssetTypeEnum.FILE.value,
         asset_name=file_id,
         asset_size=os.path.getsize(file_path)
     )
+
+
 
     asset_record = await asset_model.create_asset(asset=asset_resource)
 

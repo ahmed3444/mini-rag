@@ -11,3 +11,15 @@ class OpenAIModelEnum( Enum):
     USER="user"
     ROLE="role"
     ASSISTANT="assistant"
+
+
+class CohereModelEnum( Enum):
+    SYSTEM="system"
+    USER="user"
+    ROLE="role"
+    ASSISTANT="assistant"
+    DOCUMENT="search_document"
+    QUERY="search_query"    
+class DocumentTypeEnum( Enum):
+    DOCUMENT="document"
+    QUERY="query"

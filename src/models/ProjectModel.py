@@ -6,7 +6,7 @@ from src.helpers.config import settings
 class ProjectModel(BaseDataModel):
     def __init__(self, db_client: object):
         super().__init__(db_client)
-        self.db = self.db_client[settings.MONGO_DB_NAME]  # 👈 ناخد الاسم من config
+        self.db = self.db_client[settings.MONGO_DB_NAME]  
         self.collection = self.db[DataBaseEnum.COLLECTION_PROJECT_NAME.value]
     
     @classmethod

@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter ,status,Request
 from fastapi.response import JSONResponse
-from routes.schemes.nlp import PushRequest
+from routes.schemes.nlp import PushRequest,SearchRequest
 from src.models.ProjectModel import ProjectModel
 from src.controllers.NLPController import NLPController
 from src.models.scheme_db.ChunkModel import ChunkModel
@@ -73,6 +73,21 @@ async def get_project_index_info(project_id:str, request:Request):
             "Signal":ResponseSignal.SUCCESS.value,  
             "collection_info":collection_info
         }
+    )
+@nlp_router.post("/index/search/{project_id}")
+async def search_index(project_id:str, request:Request,search_request:SearchRequest):
+    project_model= await ProjectModel.create_instance(db_client=request.app.db_client)
+    project =project_model.get_project_or_create_one(
+        project_id=project_id
+        )
+    nlp_controller=NLPController(
+        vectordb_client=request.app.vectordb_client,
+        generation_client=request.app.generation_client,
+        embedding_client=request.app.embedding_client
+    )
+    search_result = nlp_controller.search_index(
+        project=project,
+        search_request=search_request
     )
 
     

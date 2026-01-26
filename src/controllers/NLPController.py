@@ -1,5 +1,6 @@
 from .BaseController import BaseController
 from src.models.scheme_db import Project,DataChunk
+from src.models.enums.DocumentTypeEnum import DocumentTypeEnum
 import json
 class NLPController(BaseController):
     def __init__(self,vectordb_client,generation_client,embedding_client):
@@ -40,6 +41,44 @@ class NLPController(BaseController):
             metadata=metadata,
             vector=vector,
         )
-        return True 
 
+        return True 
+    def search_index(self,project:Project ,search_request:SearchRequest):
+        collection_name=self.create_collection_name(project_id=project.project_id )
+        text=[c.chunk_text for c in search_request.chunk]
+        metadata=[c.metadata for c in search_request.chunk]
+        vector=[
+            self.embedding_client.embed_text(text=text,document_type=DocumentTypeEnum.QUERY.value )
+        for text in text
+        ]
+
+
+
+        return self.vectordb_client.search_index(
+            collection_name=collection_name,
+            search_request=search_request
+        )
+
+    def search_collection(self,project:Project,text:str,limit: int=10):
+        collection_name=self.create_collection_name(project_id=project.project_id )
+
+        vector=[
+            self.embedding_client.embed_text(text=text,document_type=DocumentTypeEnum.QUERY.value )
+        for text in text
+        ]
+        
+        if not vector or len(vector) == 0:
+            return False
+
+        result = self.vectordb_client.search_collection(
+            collection_name=collection_name,
+            vector=vector,
+            limit=limit
+        )
+        return json.loads(json.dumps(result,default=lambda x:x.__dict__))
+        
+
+
+
+     
 
